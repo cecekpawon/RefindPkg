@@ -1357,7 +1357,7 @@ VOID GenerateWaitList() {
 UINTN WaitForInput(UINTN Timeout) {
     UINTN Index = INPUT_TIMEOUT;
     UINTN Length = WaitListLength;
-    EFI_EVENT TimerEvent;
+    EFI_EVENT TimerEvent=NULL;
     EFI_STATUS Status;
 
     if (Timeout == 0) {

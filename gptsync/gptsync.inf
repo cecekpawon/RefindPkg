@@ -26,10 +26,10 @@
 #
 
 [Sources]
-  gptsync/lib.c
-  gptsync/gptsync.c
-  gptsync/os_efi.c
-  gptsync/showpart.c
+  RefindPkg/gptsync/lib.c
+  RefindPkg/gptsync/gptsync.c
+  RefindPkg/gptsync/os_efi.c
+  RefindPkg/gptsync/showpart.c
 
 [Packages]
   MdePkg/MdePkg.dec

@@ -26,40 +26,40 @@
 #
 
 [Sources]
-  EfiLib/GenericBdsLib.h
-  EfiLib/BmLib.c
-  EfiLib/DevicePath.c #included into GenericBdsLib
-  EfiLib/BdsConnect.c #included into GenericBdsLib
-  EfiLib/BdsHelper.c
-  EfiLib/BdsTianoCore.c
-  EfiLib/legacy.c
-  mok/mok.c
-  mok/guid.c
-  mok/security_policy.c
-  mok/simple_file.c
-  refind/apple.c
-  refind/main.c
-  refind/config.c
-  refind/icns.c
-  refind/legacy.c
-  refind/lib.c
-  refind/line_edit.c
-  refind/menu.c
-  refind/mystrings.c
-  refind/screen.c
-  refind/pointer.c
-  refind/driver_support.c
-  refind/gpt.c
-  refind/crc32.c
-  libeg/image.c
-  libeg/load_bmp.c
-  libeg/load_icns.c
-  libeg/lodepng.c
-  libeg/lodepng_xtra.c
-  libeg/nanojpeg.c
-  libeg/nanojpeg_xtra.c
-  libeg/screen.c
-  libeg/text.c
+  RefindPkg/EfiLib/GenericBdsLib.h
+  RefindPkg/EfiLib/BmLib.c
+  RefindPkg/EfiLib/DevicePath.c #included into GenericBdsLib
+  RefindPkg/EfiLib/BdsConnect.c #included into GenericBdsLib
+  RefindPkg/EfiLib/BdsHelper.c
+  RefindPkg/EfiLib/BdsTianoCore.c
+  RefindPkg/EfiLib/legacy.c
+  RefindPkg/mok/mok.c
+  RefindPkg/mok/guid.c
+  RefindPkg/mok/security_policy.c
+  RefindPkg/mok/simple_file.c
+  RefindPkg/refind/apple.c
+  RefindPkg/refind/main.c
+  RefindPkg/refind/config.c
+  RefindPkg/refind/icns.c
+  RefindPkg/refind/legacy.c
+  RefindPkg/refind/lib.c
+  RefindPkg/refind/line_edit.c
+  RefindPkg/refind/menu.c
+  RefindPkg/refind/mystrings.c
+  RefindPkg/refind/screen.c
+  RefindPkg/refind/pointer.c
+  RefindPkg/refind/driver_support.c
+  RefindPkg/refind/gpt.c
+  RefindPkg/refind/crc32.c
+  RefindPkg/libeg/image.c
+  RefindPkg/libeg/load_bmp.c
+  RefindPkg/libeg/load_icns.c
+  RefindPkg/libeg/lodepng.c
+  RefindPkg/libeg/lodepng_xtra.c
+  RefindPkg/libeg/nanojpeg.c
+  RefindPkg/libeg/nanojpeg_xtra.c
+  RefindPkg/libeg/screen.c
+  RefindPkg/libeg/text.c
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -67,7 +67,7 @@
   IntelFrameworkPkg/IntelFrameworkPkg.dec
   IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
 # Uncomment the below when compiling with OS X
-#  StdLib/StdLib.dec
+  StdLib/StdLib.dec
 
 [Packages.XCODE]
   StdLib/StdLib.dec
