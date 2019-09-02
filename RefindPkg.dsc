@@ -39,3 +39,4 @@
 
 [BuildOptions]
   XCODE:*_*_*_CC_FLAGS = -Wno-ignored-attributes -Wno-unused-function
+  MSFT:*_*_*_CC_FLAGS  = /Gs999999

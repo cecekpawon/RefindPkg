@@ -507,6 +507,7 @@ VOID StoreLoaderName(IN CHAR16 *Name) {
 // for information on Intel VMX features
 static VOID DoEnableAndLockVMX(VOID)
 {
+#ifdef __GNUC__
 #if defined (EFIX64) | defined (EFI32)
     UINT32 msr = 0x3a;
     UINT32 low_bits = 0, high_bits = 0;
@@ -521,6 +522,7 @@ static VOID DoEnableAndLockVMX(VOID)
         msr = 0x3a;
         __asm__ volatile ("wrmsr" : : "c" (msr), "a" (low_bits), "d" (high_bits));
     }
+#endif
 #endif
 } // VOID DoEnableAndLockVMX()
 

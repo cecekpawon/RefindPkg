@@ -35,7 +35,9 @@
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
-  IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
+# IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
+# Uncomment the below when compiling with OS X
+  StdLib/StdLib.dec
 
 [LibraryClasses]
   BaseLib
@@ -50,73 +52,73 @@
 # Comment out CompilerIntrinsicsLib when compiling for AARCH64 using UDK2014
   CompilerIntrinsicsLib
 
-[Guids]
-  gEfiAcpiTableGuid
-  gEfiAcpi10TableGuid
-  gEfiAcpi20TableGuid
-  gEfiDxeServicesTableGuid
-  gEfiEventReadyToBootGuid
-  gEfiEventVirtualAddressChangeGuid
-  gEfiEventExitBootServicesGuid
-  gEfiFileInfoGuid                              ## CONSUMES ## GUID
-  gEfiFileSystemInfoGuid                        ## CONSUMES ## GUID
-  gEfiFileSystemVolumeLabelInfoIdGuid
-  gEfiGlobalVariableGuid
-  gEfiPartTypeLegacyMbrGuid
-  gEfiPartTypeSystemPartGuid
-  gEfiSmbiosTableGuid
-  gEfiSasDevicePathGuid
+#[Guids]
+#  gEfiAcpiTableGuid
+#  gEfiAcpi10TableGuid
+#  gEfiAcpi20TableGuid
+#  gEfiDxeServicesTableGuid
+#  gEfiEventReadyToBootGuid
+#  gEfiEventVirtualAddressChangeGuid
+#  gEfiEventExitBootServicesGuid
+#  gEfiFileInfoGuid                              ## CONSUMES ## GUID
+#  gEfiFileSystemInfoGuid                        ## CONSUMES ## GUID
+#  gEfiFileSystemVolumeLabelInfoIdGuid
+#  gEfiGlobalVariableGuid
+#  gEfiPartTypeLegacyMbrGuid
+#  gEfiPartTypeSystemPartGuid
+#  gEfiSmbiosTableGuid
+#  gEfiSasDevicePathGuid
 
 [Ppis]
 
 [Protocols]
-  gEfiComponentName2ProtocolGuid                          # ALWAYS_CONSUMED
-  gEfiDevicePathToTextProtocolGuid                        # ALWAYS_CONSUMED
-  gEfiSimpleFileSystemProtocolGuid                        # ALWAYS_CONSUMED
-  gEfiSimpleTextInProtocolGuid                            # ALWAYS_CONSUMED
-  gEfiSimpleTextInputExProtocolGuid                       # ALWAYS_CONSUMED
-  gEfiSimpleTextOutProtocolGuid                           # ALWAYS_CONSUMED
-  gEfiUnicodeCollationProtocolGuid                       # ALWAYS_CONSUMED  
-  gEfiUnicodeCollation2ProtocolGuid                       # ALWAYS_CONSUMED  
-  
-  gEfiAcpiS3SaveProtocolGuid                    # PROTOCOL CONSUMES
-  gEfiBlockIoProtocolGuid                       # PROTOCOL CONSUMES
-  gEfiCpuArchProtocolGuid                       # PROTOCOL CONSUMES
-  gEfiDebugPortProtocolGuid                     # PROTOCOL CONSUMES
-  gEfiDevicePathProtocolGuid                    # PROTOCOL CONSUMES
-  gEfiDiskIoProtocolGuid                        # PROTOCOL CONSUMES
-  gEfiExtScsiPassThruProtocolGuid               ## PROTOCOL SOMETIMES_CONSUMES
-  gEfiFirmwareVolume2ProtocolGuid               # PROTOCOL CONSUMES
-  gEfiGraphicsOutputProtocolGuid                # PROTOCOL SOMETIMES_CONSUMES
-  gEfiHiiFontProtocolGuid                       # PROTOCOL CONSUMES
-  gEfiLegacy8259ProtocolGuid					## PROTOCOL SOMETIMES_CONSUMES
-  gEfiLoadedImageProtocolGuid                   # PROTOCOL CONSUMES
-  gEfiOEMBadgingProtocolGuid                    # PROTOCOL CONSUMES
-  gEfiPciIoProtocolGuid                         # PROTOCOL CONSUMES 
-  gEfiScsiIoProtocolGuid                        ## PROTOCOL SOMETIMES_CONSUMES
-  gEfiScsiPassThruProtocolGuid                  ## PROTOCOL SOMETIMES_CONSUMES
-  gEfiSimpleNetworkProtocolGuid                 # PROTOCOL CONSUMES
-  gEfiUgaDrawProtocolGuid |PcdUgaConsumeSupport # PROTOCOL SOMETIMES_CONSUMES
-  
-  gEfiAbsolutePointerProtocolGuid
-  gEfiAcpiTableProtocolGuid
-  gEfiEdidActiveProtocolGuid
-  gEfiEdidDiscoveredProtocolGuid
-  gEfiHiiDatabaseProtocolGuid
-  gEfiHiiImageProtocolGuid
-  gEfiHiiProtocolGuid
-  gEfiSimplePointerProtocolGuid
-  gEfiSmbiosProtocolGuid
-  gEfiSecurityArchProtocolGuid  
-  gEfiScsiIoProtocolGuid                        ## PROTOCOL SOMETIMES_CONSUMES
-  gEfiScsiPassThruProtocolGuid                  ## PROTOCOL SOMETIMES_CONSUMES
-  gEfiExtScsiPassThruProtocolGuid               ## PROTOCOL SOMETIMES_CONSUMES
+#  gEfiComponentName2ProtocolGuid                          # ALWAYS_CONSUMED
+#  gEfiDevicePathToTextProtocolGuid                        # ALWAYS_CONSUMED
+#  gEfiSimpleFileSystemProtocolGuid                        # ALWAYS_CONSUMED
+#  gEfiSimpleTextInProtocolGuid                            # ALWAYS_CONSUMED
+#  gEfiSimpleTextInputExProtocolGuid                       # ALWAYS_CONSUMED
+#  gEfiSimpleTextOutProtocolGuid                           # ALWAYS_CONSUMED
+#  gEfiUnicodeCollationProtocolGuid                       # ALWAYS_CONSUMED
+#  gEfiUnicodeCollation2ProtocolGuid                       # ALWAYS_CONSUMED
 
-  gEfiLegacyBiosProtocolGuid                    # PROTOCOL TO_START
+#  gEfiAcpiS3SaveProtocolGuid                    # PROTOCOL CONSUMES
+   gEfiBlockIoProtocolGuid                       # PROTOCOL CONSUMES
+#  gEfiCpuArchProtocolGuid                       # PROTOCOL CONSUMES
+#  gEfiDebugPortProtocolGuid                     # PROTOCOL CONSUMES
+#  gEfiDevicePathProtocolGuid                    # PROTOCOL CONSUMES
+#  gEfiDiskIoProtocolGuid                        # PROTOCOL CONSUMES
+#  gEfiExtScsiPassThruProtocolGuid               ## PROTOCOL SOMETIMES_CONSUMES
+#  gEfiFirmwareVolume2ProtocolGuid               # PROTOCOL CONSUMES
+#  gEfiGraphicsOutputProtocolGuid                # PROTOCOL SOMETIMES_CONSUMES
+#  gEfiHiiFontProtocolGuid                       # PROTOCOL CONSUMES
+#  gEfiLegacy8259ProtocolGuid					## PROTOCOL SOMETIMES_CONSUMES
+#  gEfiLoadedImageProtocolGuid                   # PROTOCOL CONSUMES
+#  gEfiOEMBadgingProtocolGuid                    # PROTOCOL CONSUMES
+#  gEfiPciIoProtocolGuid                         # PROTOCOL CONSUMES
+#  gEfiScsiIoProtocolGuid                        ## PROTOCOL SOMETIMES_CONSUMES
+#  gEfiScsiPassThruProtocolGuid                  ## PROTOCOL SOMETIMES_CONSUMES
+#  gEfiSimpleNetworkProtocolGuid                 # PROTOCOL CONSUMES
+#  gEfiUgaDrawProtocolGuid |PcdUgaConsumeSupport # PROTOCOL SOMETIMES_CONSUMES
 
-  gEfiLoadFile2ProtocolGuid
-  gEfiLoadFileProtocolGuid
-  gEfiHiiPackageListProtocolGuid
+#  gEfiAbsolutePointerProtocolGuid
+#  gEfiAcpiTableProtocolGuid
+#  gEfiEdidActiveProtocolGuid
+#  gEfiEdidDiscoveredProtocolGuid
+#  gEfiHiiDatabaseProtocolGuid
+#  gEfiHiiImageProtocolGuid
+#  gEfiHiiProtocolGuid
+#  gEfiSimplePointerProtocolGuid
+#  gEfiSmbiosProtocolGuid
+#  gEfiSecurityArchProtocolGuid
+#  gEfiScsiIoProtocolGuid                        ## PROTOCOL SOMETIMES_CONSUMES
+#  gEfiScsiPassThruProtocolGuid                  ## PROTOCOL SOMETIMES_CONSUMES
+#  gEfiExtScsiPassThruProtocolGuid               ## PROTOCOL SOMETIMES_CONSUMES
+
+#  gEfiLegacyBiosProtocolGuid                    # PROTOCOL TO_START
+
+#  gEfiLoadFile2ProtocolGuid
+#  gEfiLoadFileProtocolGuid
+#  gEfiHiiPackageListProtocolGuid
 
 [FeaturePcd]
   gEfiMdePkgTokenSpaceGuid.PcdUgaConsumeSupport
@@ -124,14 +126,10 @@
 [Pcd]
 
 
-[BuildOptions.IA32]
-  XCODE:*_*_*_CC_FLAGS = -Os -DEFI32 -D__MAKEWITH_TIANO
-  GCC:*_*_*_CC_FLAGS = -Os -DEFI32 -D__MAKEWITH_TIANO
-
-[BuildOptions.X64]
-  XCODE:*_*_*_CC_FLAGS = -Os -DEFIX64 -D__MAKEWITH_TIANO
-  GCC:*_*_*_CC_FLAGS = -Os -DEFIX64 -D__MAKEWITH_TIANO
-
-[BuildOptions.AARCH64]
-  XCODE:*_*_*_CC_FLAGS = -Os  -DEFIAARCH64 -D__MAKEWITH_TIANO
-  GCC:*_*_*_CC_FLAGS = -Os -DEFIAARCH64 -D__MAKEWITH_TIANO
+[BuildOptions]
+         *_*_*_CC_FLAGS = -D__MAKEWITH_TIANO
+      *_*_IA32_CC_FLAGS = -DEFI32
+       *_*_X64_CC_FLAGS = -DEFIX64
+   *_*_AARCH64_CC_FLAGS = -DEFIAARCH64
+     GCC:*_*_*_CC_FLAGS = -Os
+    MSFT:*_*_*_CC_FLAGS =  /wd4295 /wd4244

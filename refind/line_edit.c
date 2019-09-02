@@ -192,6 +192,7 @@ BOOLEAN line_edit(CHAR16 *line_in, CHAR16 **line_out, UINTN x_max) {
             first = 0;
          }
          continue;
+      #if 0
       case '\t':
       case ' ' ... '~':
       case 0x80 ... 0xffff:
@@ -207,8 +208,28 @@ BOOLEAN line_edit(CHAR16 *line_in, CHAR16 **line_out, UINTN x_max) {
          else if (first + cursor < len)
             first++;
          continue;
+      #endif
+      default:
+         if ((key.UnicodeChar == '\t')
+            || ((key.UnicodeChar >= ' ') && (key.UnicodeChar <= '~'))
+            || ((key.UnicodeChar >= 0x80) && (key.UnicodeChar <= 0xffff))
+            )
+         {
+            if (len+1 == size)
+               continue;
+            for (i = len; i > first + cursor; i--)
+               line[i] = line[i-1];
+            line[first + cursor] = key.UnicodeChar;
+            len++;
+            line[len] = '\0';
+            if (cursor+2 < x_max)
+               cursor++;
+            else if (first + cursor < len)
+               first++;
+            continue;
+         }
       }
-   }
+   }//while
 
    refit_call2_wrapper(ST->ConOut->EnableCursor, ST->ConOut, FALSE);
    MyFreePool(print);

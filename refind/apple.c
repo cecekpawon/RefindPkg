@@ -120,8 +120,8 @@ VOID RotateCsrValue(VOID) {
 
 typedef struct EfiAppleSetOsInterface {
     UINT64 Version;
-    EFI_STATUS EFIAPI (*SetOsVersion) (IN CHAR8 *Version);
-    EFI_STATUS EFIAPI (*SetOsVendor) (IN CHAR8 *Vendor);
+    EFI_STATUS (EFIAPI *SetOsVersion) (IN CHAR8 *Version);
+    EFI_STATUS (EFIAPI *SetOsVendor) (IN CHAR8 *Vendor);
 } EfiAppleSetOsInterface;
 
 // Function to tell the firmware that OS X is being launched. This is

@@ -25,10 +25,14 @@ struct _EFI_DEVICE_PATH_PROTOCOL;
 typedef struct _EFI_SECURITY2_PROTOCOL EFI_SECURITY2_PROTOCOL;
 typedef struct _EFI_SECURITY_PROTOCOL EFI_SECURITY_PROTOCOL;
 
+#ifdef EFIAPI
+#define MSABI EFIAPI
+#else
 #if defined(EFIX64)
 #define MSABI __attribute__((ms_abi))
 #else
 #define MSABI
+#endif
 #endif
 
 typedef EFI_STATUS (MSABI *EFI_SECURITY_FILE_AUTHENTICATION_STATE) (
@@ -62,7 +66,7 @@ static EFI_SECURITY2_FILE_AUTHENTICATION es2fa = NULL;
 // returned in case of a shim/MOK authentication failure. This is done because
 // the SB failure code seems to vary from one implementation to another, and I
 // don't want to interfere with that at this time.
-static MSABI EFI_STATUS
+static EFI_STATUS MSABI
 security2_policy_authentication (
    const EFI_SECURITY2_PROTOCOL *This,
    const EFI_DEVICE_PATH_PROTOCOL *DevicePath,
@@ -94,7 +98,7 @@ security2_policy_authentication (
 // filesystems. This also has the effect of returning whatever the platform code is for
 // authentication failure, be it EFI_ACCESS_DENIED, EFI_SECURITY_VIOLATION, or something
 // else. (This seems to vary between implementations.)
-static MSABI EFI_STATUS
+static EFI_STATUS MSABI
 security_policy_authentication (
    const EFI_SECURITY_PROTOCOL *This,
    UINT32 AuthenticationStatus,

@@ -48,7 +48,9 @@ int MyStrlen(const char *InString);
 #endif
 VOID *MyMemSet(VOID *s, int c, size_t n);
 VOID *MyMemCpy(void *__restrict __dest, const void *__restrict __src, size_t __n);
+#ifndef _MSC_VER
 #define memset(s, c, n) MyMemSet(s, c, n)
+#endif
 #define memcpy(d, s, n) MyMemCpy(d, s, n)
 
 extern const char* LODEPNG_VERSION_STRING;

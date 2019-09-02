@@ -78,7 +78,7 @@ typedef struct _gpt_data {
    struct _gpt_data   *NextEntry;
 } GPT_DATA;
 
-#pragma pack(0)
+#pragma pack()
 
 VOID ClearGptData(GPT_DATA *Data);
 EFI_STATUS ReadGptData(REFIT_VOLUME *Volume, GPT_DATA **Data);
