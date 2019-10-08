@@ -113,8 +113,8 @@
 #define _NANOJPEG_H
 
 // Modified: Map libc-style free() and malloc() to their EFI equivalents....
-#define free FreePool
-#define malloc AllocatePool
+#define free   lodepng_free
+#define malloc lodepng_malloc
 #define memset MyMemSet
 #define memcpy MyMemCpy
 
