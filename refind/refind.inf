@@ -3,7 +3,7 @@
 # refind.inf file to build rEFInd using the EDK2/UDK201# development
 # kit.
 #
-# Copyright (c) 2012-2017 by Roderick W. Smith
+# Copyright (c) 2012-2020 by Roderick W. Smith
 # Released under the terms of the GPLv3 (or, at your discretion, any later
 # version), a copy of which should come with this file.
 #
@@ -38,19 +38,23 @@
   RefindPkg/mok/security_policy.c
   RefindPkg/mok/simple_file.c
   RefindPkg/refind/apple.c
-  RefindPkg/refind/main.c
   RefindPkg/refind/config.c
-  RefindPkg/refind/icns.c
-  RefindPkg/refind/legacy.c
-  RefindPkg/refind/lib.c
-  RefindPkg/refind/line_edit.c
-  RefindPkg/refind/menu.c
-  RefindPkg/refind/mystrings.c
-  RefindPkg/refind/screen.c
-  RefindPkg/refind/pointer.c
+  RefindPkg/refind/crc32.c
   RefindPkg/refind/driver_support.c
   RefindPkg/refind/gpt.c
-  RefindPkg/refind/crc32.c
+  RefindPkg/refind/icns.c
+  RefindPkg/refind/install.c
+  RefindPkg/refind/launch_efi.c
+  RefindPkg/refind/launch_legacy.c
+  RefindPkg/refind/lib.c
+  RefindPkg/refind/line_edit.c
+  RefindPkg/refind/linux.c
+  RefindPkg/refind/main.c
+  RefindPkg/refind/menu.c
+  RefindPkg/refind/mystrings.c
+  RefindPkg/refind/pointer.c
+  RefindPkg/refind/scan.c
+  RefindPkg/refind/screen.c
   RefindPkg/libeg/image.c
   RefindPkg/libeg/load_bmp.c
   RefindPkg/libeg/load_icns.c
@@ -84,6 +88,7 @@
   DxeServicesLib
   DxeServicesTableLib
   #HobLib
+  MemoryAllocationLib
   #IoLib
   #PerformanceLib
   #IntrinsicLib

@@ -34,7 +34,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*
- * Modifications copyright (c) 2012-2017 Roderick W. Smith
+ * Modifications copyright (c) 2012-2020 Roderick W. Smith
  *
  * Modifications distributed under the terms of the GNU General Public
  * License (GPL) version 3 (GPLv3), or (at your option) any later version.
@@ -89,6 +89,20 @@ EFI_DEVICE_PATH EndDevicePath[] = {
 #define BTRFS_SIGNATURE                  "_BHRfS_M"
 #define XFS_SIGNATURE                    "XFSB"
 #define NTFS_SIGNATURE                   "NTFS    "
+#define FAT12_SIGNATURE                  "FAT12   "
+#define FAT16_SIGNATURE                  "FAT16   "
+#define FAT32_SIGNATURE                  "FAT32   "
+
+#if defined (EFIX64)
+EFI_GUID gFreedesktopRootGuid = { 0x4f68bce3, 0xe8cd, 0x4db1, { 0x96, 0xe7, 0xfb, 0xca, 0xf9, 0x84, 0xb7, 0x09 }};
+#elif defined (EFI32)
+EFI_GUID gFreedesktopRootGuid = { 0x44479540, 0xf297, 0x41b2, { 0x9a, 0xf7, 0xd1, 0x31, 0xd5, 0xf0, 0x45, 0x8a }};
+#elif defined (EFIAARCH64)
+EFI_GUID gFreedesktopRootGuid = { 0xb921b045, 0x1df0, 0x41c3, { 0xaf, 0x44, 0x4c, 0x6f, 0x28, 0x0d, 0x3f, 0xae }};
+#else
+// Below is GUID for ARM32
+EFI_GUID gFreedesktopRootGuid = { 0x69dad710, 0x2ce4, 0x4e3c, { 0xb1, 0x6c, 0x21, 0xa1, 0xd4, 0x9a, 0xbe, 0xd3 }};
+#endif
 
 // variables
 
@@ -101,7 +115,6 @@ CHAR16           *SelfDirPath;
 REFIT_VOLUME     *SelfVolume = NULL;
 REFIT_VOLUME     **Volumes = NULL;
 UINTN            VolumesCount = 0;
-extern GPT_DATA *gPartitions;
 extern EFI_GUID RefindGuid;
 
 // Maximum size for disk sectors
@@ -165,7 +178,7 @@ VOID CleanUpPathNameSlashes(IN OUT CHAR16 *PathName) {
 // input value.
 // If InString contains no ")" character, this function leaves the original input string
 // unmodified and also returns that string. If InString is NULL, this function returns NULL.
-static CHAR16* SplitDeviceString(IN OUT CHAR16 *InString) {
+CHAR16* SplitDeviceString(IN OUT CHAR16 *InString) {
     INTN i;
     CHAR16 *FileName = NULL;
     BOOLEAN Found = FALSE;
@@ -367,19 +380,24 @@ EFI_STATUS EfivarGetRaw(EFI_GUID *vendor, CHAR16 *name, CHAR8 **buffer, UINTN *s
         if (Status == EFI_SUCCESS)
             Status = egLoadFile(VarsDir, name, &buf, size);
         ReadFromNvram = FALSE;
+        MyFreePool(VarsDir);
     } else {
         l = sizeof(CHAR16 *) * EFI_MAXIMUM_VARIABLE_SIZE;
         buf = AllocatePool(l);
-        if (!buf)
+        if (!buf) {
+            *buffer = NULL;
             return EFI_OUT_OF_RESOURCES;
+        }
         Status = refit_call5_wrapper(RT->GetVariable, name, vendor, NULL, &l, buf);
     }
     if (EFI_ERROR(Status) == EFI_SUCCESS) {
         *buffer = (CHAR8*) buf;
         if ((size) && ReadFromNvram)
             *size = l;
-    } else
+    } else {
         MyFreePool(buf);
+        *buffer = NULL;
+    }
     return Status;
 } // EFI_STATUS EfivarGetRaw()
 
@@ -397,6 +415,7 @@ EFI_STATUS EfivarSetRaw(EFI_GUID *vendor, CHAR16 *name, CHAR8 *buf, UINTN size, 
         if (Status == EFI_SUCCESS) {
             Status = egSaveFile(VarsDir, name, (UINT8 *) buf, size);
         }
+        MyFreePool(VarsDir);
     } else {
         flags = EFI_VARIABLE_BOOTSERVICE_ACCESS|EFI_VARIABLE_RUNTIME_ACCESS;
         if (persistent)
@@ -495,17 +514,16 @@ static CHAR16 *FSTypeName(IN UINT32 TypeCode) {
 // 4096) bytes of the filesystem. Sets the filesystem type code in Volume->FSType
 // and the UUID/serial number in Volume->VolUuid. Note that the UUID value is
 // recognized differently for each filesystem, and is currently supported only
-// for NTFS, ext2/3/4fs, and ReiserFS (and for NTFS it's really a 64-bit serial
-// number not a UUID or GUID). If the UUID can't be determined, it's set to 0.
-// Also, the UUID is just read directly into memory; it is *NOT* valid when
-// displayed by GuidAsString() or used in other GUID/UUID-manipulating
-// functions. (As I write, it's being used merely to detect partitions that are
-// part of a RAID 1 array.)
+// for NTFS, FAT, ext2/3/4fs, and ReiserFS (and for NTFS and FAT it's really a
+// 64-bit or 32-bit serial number not a UUID or GUID). If the UUID can't be
+// determined, it's set to 0. Also, the UUID is just read directly into memory;
+// it is *NOT* valid when displayed by GuidAsString() or used in other
+// GUID/UUID-manipulating functions. (As I write, it's being used merely to
+// detect partitions that are part of a RAID 1 array.)
 static VOID SetFilesystemData(IN UINT8 *Buffer, IN UINTN BufferSize, IN OUT REFIT_VOLUME *Volume) {
    UINT32       *Ext2Incompat, *Ext2Compat;
    UINT16       *Magic16;
    char         *MagicString;
-   EFI_FILE     *RootDir;
 
    if ((Buffer != NULL) && (Volume != NULL)) {
       SetMem(&(Volume->VolUuid), sizeof(EFI_GUID), 0);
@@ -565,24 +583,24 @@ static VOID SetFilesystemData(IN UINT8 *Buffer, IN UINTN BufferSize, IN OUT REFI
 
       if (BufferSize >= 512) {
          // Search for NTFS, FAT, and MBR/EBR.
-         // These all have 0xAA55 at the end of the first sector, but FAT and
-         // MBR/EBR are not easily distinguished. Thus, we first look for NTFS
-         // "magic"; then check to see if the volume can be mounted, thus
-         // relying on the EFI's built-in FAT driver to identify FAT; and then
-         // check to see if the "volume" is in fact a whole-disk device.
+         // These all have 0xAA55 at the end of the first sector, so we must
+         // also search for NTFS, FAT12, FAT16, and FAT32 signatures to
+         // figure out where to look for the filesystem serial numbers.
          Magic16 = (UINT16*) (Buffer + 510);
          if (*Magic16 == FAT_MAGIC) {
-            MagicString = (char*) (Buffer + 3);
-            if (CompareMem(MagicString, NTFS_SIGNATURE, 8) == 0) {
+            MagicString = (char*) Buffer;
+            if (CompareMem(MagicString + 3, NTFS_SIGNATURE, 8) == 0) {
                Volume->FSType = FS_TYPE_NTFS;
                CopyMem(&(Volume->VolUuid), Buffer + 0x48, sizeof(UINT64));
-            } else {
-               RootDir = LibOpenRoot(Volume->DeviceHandle);
-               if (RootDir != NULL) {
-                  Volume->FSType = FS_TYPE_FAT;
-               } else if (!Volume->BlockIO->Media->LogicalPartition) {
-                  Volume->FSType = FS_TYPE_WHOLEDISK;
-               } // if/elseif/else
+            } else if ((CompareMem(MagicString + 0x36, FAT12_SIGNATURE, 8) == 0) ||
+                       (CompareMem(MagicString + 0x36, FAT16_SIGNATURE, 8) == 0)) {
+                Volume->FSType = FS_TYPE_FAT;
+                CopyMem(&(Volume->VolUuid), Buffer + 0x27, sizeof(UINT32));
+            } else if (CompareMem(MagicString + 0x52, FAT32_SIGNATURE, 8) == 0) {
+                Volume->FSType = FS_TYPE_FAT;
+                CopyMem(&(Volume->VolUuid), Buffer + 0x43, sizeof(UINT32));
+            } else if (!Volume->BlockIO->Media->LogicalPartition) {
+                Volume->FSType = FS_TYPE_WHOLEDISK;
             } // if/else
             return;
          } // if
@@ -759,6 +777,9 @@ static VOID ScanVolumeBootcode(REFIT_VOLUME *Volume, BOOLEAN *Bootable)
 // Set default volume badge icon based on /.VolumeBadge.{icns|png} file or disk kind
 VOID SetVolumeBadgeIcon(REFIT_VOLUME *Volume)
 {
+   if (Volume == NULL)
+       return;
+
    if (GlobalConfig.HideUIFlags & HIDEUI_FLAG_BADGES)
       return;
 
@@ -789,7 +810,7 @@ VOID SetVolumeBadgeIcon(REFIT_VOLUME *Volume)
 static CHAR16 *SizeInIEEEUnits(UINT64 SizeInBytes) {
     UINT64 SizeInIeee;
     UINTN Index = 0, NumPrefixes;
-    CHAR16 *Units, *Prefixes = L" KMGTPEZ";
+    CHAR16 *Units = NULL, *Prefixes = L" KMGTPEZ";
     CHAR16 *TheValue;
 
     TheValue = AllocateZeroPool(sizeof(CHAR16) * 256);
@@ -808,6 +829,7 @@ static CHAR16 *SizeInIEEEUnits(UINT64 SizeInBytes) {
         } // if/else
         SPrint(TheValue, 255, L"%ld%s", SizeInIeee, Units);
     } // if
+    MyFreePool(Units);
     return TheValue;
 } // CHAR16 *SizeInIEEEUnits()
 
@@ -892,6 +914,7 @@ static VOID SetPartGuidAndName(REFIT_VOLUME *Volume, EFI_DEVICE_PATH_PROTOCOL *D
                     GlobalConfig.DiscoveredRoot = Volume;
                 } // if (GUIDs match && automounting OK)
                 Volume->IsMarkedReadOnly = ((PartInfo->attributes & GPT_READ_ONLY) > 0);
+                MyFreePool(PartInfo);
             } // if (PartInfo exists)
         } else {
             // TODO: Better to assign a random GUID to MBR partitions, but I couldn't
@@ -989,7 +1012,7 @@ VOID ScanVolume(REFIT_VOLUME *Volume)
             // get the handle for that path
             RemainingDevicePath = DiskDevicePath;
             Status = refit_call3_wrapper(BS->LocateDevicePath, &BlockIoProtocol, &RemainingDevicePath, &WholeDiskHandle);
-            FreePool(DiskDevicePath);
+            MyFreePool(DiskDevicePath);
 
             if (!EFI_ERROR(Status)) {
                 //Print(L"  - original handle: %08x - disk handle: %08x\n", (UINT32)DeviceHandle, (UINT32)WholeDiskHandle);
@@ -1155,6 +1178,7 @@ VOID ScanVolumes(VOID)
         if (Volume->DeviceHandle == SelfLoadedImage->DeviceHandle)
             SelfVolume = Volume;
     }
+    MyFreePool(UuidList);
     MyFreePool(Handles);
 
     if (SelfVolume == NULL)
@@ -1420,6 +1444,7 @@ BOOLEAN DirIterNext(IN OUT REFIT_DIR_ITER *DirIter, IN UINTN FilterMode, IN CHAR
             while (KeepGoing && (OnePattern = FindCommaDelimited(FilePattern, i++)) != NULL) {
                if (MetaiMatch(DirIter->LastFileInfo->FileName, OnePattern))
                    KeepGoing = FALSE;
+               MyFreePool(OnePattern);
             } // while
             // else continue loop
         } else
@@ -1608,7 +1633,7 @@ VOID FindVolumeAndFilename(IN EFI_DEVICE_PATH *loadpath, OUT REFIT_VOLUME **Devi
         }
         VolumeDeviceString = DevicePathToStr(Volumes[i]->DevicePath);
         Temp = SplitDeviceString(VolumeDeviceString);
-        if (MyStriCmp(DeviceString, VolumeDeviceString)) {
+        if (MyStrStr(VolumeDeviceString, DeviceString)) {
             Found = TRUE;
             *DeviceVolume = Volumes[i];
         }

@@ -73,6 +73,7 @@
 #include "lib.h"
 #include "mystrings.h"
 #include "screen.h"
+#include "launch_efi.h"
 #include "../include/refit_call_wrapper.h"
 
 #if defined (EFIX64)
@@ -554,6 +555,7 @@ static UINTN ScanDriverDir(IN CHAR16 *Path)
         SPrint(FileName, 255, L"%s\\%s", Path, DirEntry->FileName);
         NumFound++;
         Status = StartEFIImage(SelfVolume, FileName, L"", DirEntry->FileName, 0, FALSE, TRUE);
+        MyFreePool(DirEntry);
     } // while
     Status = DirIterClose(&DirIter);
     if ((Status != EFI_NOT_FOUND) && (Status != EFI_INVALID_PARAMETER)) {

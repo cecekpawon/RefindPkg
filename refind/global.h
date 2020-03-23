@@ -34,7 +34,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*
- * Modifications copyright (c) 2012-2015 Roderick W. Smith
+ * Modifications copyright (c) 2012-2020 Roderick W. Smith
  *
  * Modifications distributed under the terms of the GNU General Public
  * License (GPL) version 3 (GPLv3), a copy of which must be distributed
@@ -78,7 +78,9 @@
 #define TAG_CSR_ROTATE       (18)
 #define TAG_FWUPDATE_TOOL    (19)
 #define TAG_HIDDEN           (20)
-#define NUM_TOOLS            (21)
+#define TAG_INSTALL          (21)
+#define TAG_BOOTORDER        (22)
+#define NUM_TOOLS            (23)
 
 #define NUM_SCAN_OPTIONS 10
 
@@ -101,7 +103,7 @@
 #define DISCOVERY_TYPE_AUTO     1
 #define DISCOVERY_TYPE_MANUAL   2
 
-#ifdef __MAKEWITH_GNUEFI
+//#ifdef __MAKEWITH_GNUEFI
 //
 // define BBS Device Types
 //
@@ -113,7 +115,7 @@
 #define BBS_EMBED_NETWORK 0x06
 #define BBS_BEV_DEVICE    0x80
 #define BBS_UNKNOWN       0xff
-#endif
+//#endif
 
 // BIOS Boot Specification (BBS) device types, as returned in DevicePath->Type field
 #define DEVICE_TYPE_HW         0x01
@@ -137,6 +139,7 @@
 #define FS_TYPE_BTRFS          10
 #define FS_TYPE_XFS            11
 #define FS_TYPE_ISO9660        12
+#define NUM_FS_TYPES           13
 
 // How to scale banner images
 #define BANNER_NOSCALE         0
@@ -155,6 +158,10 @@
 
 // Minimum horizontal resolution for a screen to be consider high-DPI
 #define HIDPI_MIN 1921
+
+#ifndef EFI_OS_INDICATIONS_BOOT_TO_FW_UI
+#define EFI_OS_INDICATIONS_BOOT_TO_FW_UI 0x0000000000000001ULL
+#endif
 
 // Names of binaries that can manage MOKs....
 #if defined (EFIX64)
@@ -213,6 +220,7 @@
 
 #define NULL_GUID_VALUE { 0x00000000, 0x0000, 0x0000, {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00} };
 #define REFIND_GUID_VALUE { 0x36D08FA7, 0xCF0B, 0x42F5, {0x8F, 0x14, 0x68, 0xDF, 0x73, 0xED, 0x37, 0x40} };
+#define ESP_GUID_VALUE { 0xc12a7328, 0xf81f, 0x11d2, { 0xba, 0x4b, 0x00, 0xa0, 0xc9, 0x3e, 0xc9, 0x3b } };
 
 // Configuration file variables
 #define KERNEL_VERSION L"%v"
@@ -254,7 +262,6 @@ typedef struct {
    EG_IMAGE            *VolIconImage;
    EG_IMAGE            *VolBadgeImage;
    UINTN               DiskKind;
-//    BOOLEAN             IsAppleLegacy;
    BOOLEAN             HasBootCode;
    CHAR16              *OSIconName;
    CHAR16              *OSName;
@@ -325,6 +332,7 @@ typedef struct {
    BOOLEAN          HiddenTags;
    BOOLEAN          UseNvram;
    BOOLEAN          ShutdownAfterTimeout;
+   BOOLEAN          Install;
    UINTN            RequestedScreenWidth;
    UINTN            RequestedScreenHeight;
    UINTN            BannerBottomEdge;
@@ -382,22 +390,17 @@ extern EFI_GUID gEfiGlobalVariableGuid;
 
 extern BOOLEAN HaveResized;
 
-EFI_STATUS StartEFIImage(IN REFIT_VOLUME *Volume,
-                         IN CHAR16 *Filename,
-                         IN CHAR16 *LoadOptions,
-                         IN CHAR16 *ImageTitle,
-                         IN CHAR8 OSType,
-                         IN BOOLEAN Verbose,
-                         IN BOOLEAN IsDriver);
-LOADER_ENTRY *InitializeLoaderEntry(IN LOADER_ENTRY *Entry);
-REFIT_MENU_SCREEN *InitializeSubScreen(IN LOADER_ENTRY *Entry);
-VOID GenerateSubScreen(LOADER_ENTRY *Entry, IN REFIT_VOLUME *Volume, IN BOOLEAN GenerateReturn);
+extern EFI_GUID GlobalGuid;
+extern EFI_GUID RefindGuid;
+
+extern REFIT_MENU_SCREEN MainMenu;
+extern REFIT_MENU_ENTRY MenuEntryReturn;
+
+VOID AboutrEFInd(VOID);
 EG_IMAGE * GetDiskBadge(IN UINTN DiskType);
 LOADER_ENTRY * MakeGenericLoaderEntry(VOID);
-VOID SetLoaderDefaults(LOADER_ENTRY *Entry, CHAR16 *LoaderPath, IN REFIT_VOLUME *Volume);
-LOADER_ENTRY * AddPreparedLoaderEntry(LOADER_ENTRY *Entry);
 VOID StoreLoaderName(IN CHAR16 *Name);
-VOID RescanAll(BOOLEAN DisplayMessage);
+VOID RescanAll(BOOLEAN DisplayMessage, BOOLEAN Reconnect);
 
 #endif
 
