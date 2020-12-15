@@ -38,5 +38,6 @@
   #RefindPkg/filesystems/ntfs.inf
 
 [BuildOptions]
+  *_*_*_CC_FLAGS       = -DDISABLE_NEW_DEPRECATED_INTERFACES
   XCODE:*_*_*_CC_FLAGS = -Wno-ignored-attributes -Wno-unused-function
   MSFT:*_*_*_CC_FLAGS  = /Gs999999

@@ -148,4 +148,11 @@ EfiReallocatePool (
 
 #define PoolPrint(...) CatSPrint(NULL, __VA_ARGS__)
 
+// Wrapper for EDK DISABLE_NEW_DEPRECATED_INTERFACES
+#ifdef DISABLE_NEW_DEPRECATED_INTERFACES
+#define StrCat(a, b) StrCatS(a, StrLen(a), b)
+#define StrCpy(a, b) StrCpyS(a, StrLen(a), b)
+#define UnicodeStrToAsciiStr(a, b) UnicodeStrToAsciiStrS(a, b, StrLen(a) + 1)
+#endif
+
 #endif
