@@ -49,6 +49,7 @@
   RefindPkg/refind/lib.c
   RefindPkg/refind/line_edit.c
   RefindPkg/refind/linux.c
+  RefindPkg/refind/log.c
   RefindPkg/refind/main.c
   RefindPkg/refind/menu.c
   RefindPkg/refind/mystrings.c
