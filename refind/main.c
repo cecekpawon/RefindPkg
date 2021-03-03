@@ -101,7 +101,7 @@ REFIT_CONFIG GlobalConfig = { /* TextOnly = */ FALSE,
                               /* UseNvram = */ TRUE,
                               /* ShutdownAfterTimeout = */ FALSE,
                               /* Install = */ FALSE,
-                              /* WriteSystemdVars = */ TRUE,
+                              /* WriteSystemdVars = */ FALSE,
                               /* RequestedScreenWidth = */ 0,
                               /* RequestedScreenHeight = */ 0,
                               /* BannerBottomEdge = */ 0,
@@ -393,7 +393,7 @@ VOID LogBasicInfo(VOID) {
             TempStr = L"CSM type: UEFI";
             break;
         case LEGACY_TYPE_NONE:
-            TempStr = L"CSM is unavailable";
+            TempStr = L"CSM is not available";
             break;
         default: // should never happen; just in case....
             TempStr = L"CSM type: unknown";
@@ -471,12 +471,12 @@ efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
         StartLogging(FALSE);
         LogBasicInfo();
     }
+    MokProtocol = SecureBootSetup();
     if (LoadDrivers())
         ScanVolumes();
 
     LOG(1, LOG_LINE_SEPARATOR, L"Initializing basic features");
     AdjustDefaultSelection();
-    MokProtocol = SecureBootSetup();
 
     if (GlobalConfig.SpoofOSXVersion && GlobalConfig.SpoofOSXVersion[0] != L'\0')
         SetAppleOSInfo();
