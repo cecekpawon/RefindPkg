@@ -1412,9 +1412,14 @@ static BOOLEAN IsValidTool(IN REFIT_VOLUME *BaseVolume, CHAR16 *PathName) {
     BOOLEAN retval = TRUE;
     UINTN i = 0;
 
-    LOG(3, LOG_LINE_NORMAL, L"Searching for tool '%s' on '%s'", PathName,
+    LOG(3, LOG_LINE_NORMAL, L"Checking validity of tool '%s' on '%s'", PathName,
         BaseVolume->PartName ? BaseVolume->PartName : BaseVolume->VolName);
-    DontScanTools = ReadHiddenTags(L"HiddenTools");
+    if (gHiddenTools == NULL) {
+        DontScanTools = ReadHiddenTags(L"HiddenTools");
+        gHiddenTools = StrDuplicate(DontScanTools);
+    } else {
+        DontScanTools = StrDuplicate(gHiddenTools);
+    }
     MergeStrings(&DontScanTools, GlobalConfig.DontScanTools, L',');
     if (FileExists(BaseVolume->RootDir, PathName) && IsValidLoader(BaseVolume->RootDir, PathName)) {
         SplitPathName(PathName, &TestVolName, &TestPathName, &TestFileName);
@@ -1427,8 +1432,11 @@ static BOOLEAN IsValidTool(IN REFIT_VOLUME *BaseVolume, CHAR16 *PathName) {
             } // if
             MyFreePool(DontScanThis);
             MyFreePool(DontVolName);
+            DontVolName = NULL;
             MyFreePool(DontPathName);
+            DontPathName = NULL;
             MyFreePool(DontFileName);
+            DontFileName = NULL;
         } // while
     } else
         retval = FALSE;
@@ -1436,6 +1444,8 @@ static BOOLEAN IsValidTool(IN REFIT_VOLUME *BaseVolume, CHAR16 *PathName) {
     MyFreePool(TestPathName);
     MyFreePool(TestFileName);
     MyFreePool(DontScanTools);
+    LOG(4, LOG_LINE_NORMAL, L"Done checking validity of tool '%s' on '%s'", PathName,
+        BaseVolume->PartName ? BaseVolume->PartName : BaseVolume->VolName);
     return retval;
 } // VOID IsValidTool()
 
