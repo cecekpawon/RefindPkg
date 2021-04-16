@@ -38,6 +38,7 @@
  * - xxHash source repository: https://github.com/Cyan4973/xxHash
  */
 
+#include "zstd_internal.h"
 #include "xxhash.h"
 
 /*-*************************************

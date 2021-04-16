@@ -50,6 +50,7 @@
 /*-****************************************
 *  Dependencies
 ******************************************/
+#include "zstd_internal.h"
 #include "error_private.h" /* error codes and messages */
 #include "mem.h"	   /* unaligned access routines */
 

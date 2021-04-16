@@ -17,6 +17,13 @@
 #ifndef ZSTD_CCOMMON_H_MODULE
 #define ZSTD_CCOMMON_H_MODULE
 
+#ifdef __MAKEWITH_TIANO
+#include "fsw_efi_edk2_base.h"
+#define __always_inline inline __attribute__((__always_inline__))
+#define memcpy(dest,src,size) CopyMem(dest,src,size)
+#define memset(ptr, c, len) SetMem(ptr, len, c)
+#endif
+
 /*-*******************************************************
 *  Compiler specifics
 *********************************************************/

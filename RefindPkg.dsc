@@ -1,5 +1,5 @@
 [Defines]
-  PLATFORM_NAME                  = Refind
+  PLATFORM_NAME                  = RefindPkg
   PLATFORM_GUID                  = d6365e1c-b895-426d-a012-46769b2d02a3
   PLATFORM_VERSION               = 4.5.0
   DSC_SPECIFICATION              = 0x00010006
@@ -31,13 +31,13 @@
 [Components]
   RefindPkg/refind/refind.inf
   RefindPkg/gptsync/gptsync.inf
-  #RefindPkg/filesystems/ext2.inf
-  #RefindPkg/filesystems/ext4.inf
-  #RefindPkg/filesystems/btrfs.inf
-  #RefindPkg/filesystems/reiserfs.inf
-  #RefindPkg/filesystems/hfs.inf
-  #RefindPkg/filesystems/iso9660.inf
-  #RefindPkg/filesystems/ntfs.inf
+  RefindPkg/filesystems/ext2.inf
+  RefindPkg/filesystems/ext4.inf
+  RefindPkg/filesystems/btrfs.inf
+  RefindPkg/filesystems/reiserfs.inf
+  RefindPkg/filesystems/hfs.inf
+  RefindPkg/filesystems/iso9660.inf
+  RefindPkg/filesystems/ntfs.inf
 
 [BuildOptions]
   *_*_*_CC_FLAGS       = -DDISABLE_NEW_DEPRECATED_INTERFACES
